@@ -9,7 +9,7 @@ export default defineConfig({
         port: 8080,
         hmr: {
             // workaround for development in docker
-            clientPort: 80,
+            clientPort: 443,
         },
     },
     build: {
