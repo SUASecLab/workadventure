@@ -10,6 +10,8 @@
     import Chat from "./Chat/Chat.svelte";
     import EnableCameraScene from "./EnableCamera/EnableCameraScene.svelte";
     import LoginScene from "./Login/LoginScene.svelte";
+    import FAQScene from "./FAQScene/FAQScene.svelte";
+    import {faqSceneVisibleStore} from "../Stores/FAQSceneStore";
     import MainLayout from "./MainLayout.svelte";
     import SelectCharacterScene from "./selectCharacter/SelectCharacterScene.svelte";
     import SelectCompanionScene from "./SelectCompanion/SelectCompanionScene.svelte";
@@ -26,6 +28,10 @@
 {:else if $errorStore.length > 0}
     <div>
         <ErrorDialog />
+    </div>
+{:else if $faqSceneVisibleStore}
+    <div class="scrollable">
+        <FAQScene {game} />
     </div>
 {:else if $loginSceneVisibleStore}
     <div class="scrollable">
