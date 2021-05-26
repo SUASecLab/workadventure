@@ -190,7 +190,7 @@ class CoWebsiteManager {
         }
         this.cowebsiteMainDom.appendChild(iframe);
         const onTimeoutPromise = new Promise<void>((resolve) => {
-            setTimeout(() => resolve(), 2000);
+            setTimeout(() => resolve(), 5000);
         });
         this.currentOperationPromise = this.currentOperationPromise
             .then(() => Promise.race([onloadPromise, onTimeoutPromise]))
