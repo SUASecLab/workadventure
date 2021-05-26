@@ -13,6 +13,8 @@
     import {errorStore} from "../Stores/ErrorStore";
     import CustomCharacterScene from "./CustomCharacterScene/CustomCharacterScene.svelte";
     import LoginScene from "./Login/LoginScene.svelte";
+    import FAQScene from "./FAQScene/FAQScene.svelte";
+    import {faqSceneVisibleStore} from "../Stores/FAQSceneStore";
     import Chat from "./Chat/Chat.svelte";
     import {loginSceneVisibleStore} from "../Stores/LoginSceneStore";
     import EnableCameraScene from "./EnableCamera/EnableCameraScene.svelte";
@@ -48,6 +50,11 @@
 </script>
 
 <div>
+    {#if $faqSceneVisibleStore}
+        <div class="scrollable">
+            <FAQScene game={game}></FAQScene>
+        </div>
+    {/if}
     {#if $loginSceneVisibleStore}
         <div class="scrollable">
             <LoginScene game={game}></LoginScene>

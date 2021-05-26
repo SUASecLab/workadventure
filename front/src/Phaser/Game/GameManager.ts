@@ -2,6 +2,7 @@ import { GameScene } from "./GameScene";
 import { connectionManager } from "../../Connexion/ConnectionManager";
 import type { Room } from "../../Connexion/Room";
 import { LoginSceneName } from "../Login/LoginScene";
+import { FAQSceneName } from "../Login/FAQScene";
 import { SelectCharacterSceneName } from "../Login/SelectCharacterScene";
 import { EnableCameraSceneName } from "../Login/EnableCameraScene";
 import { localUserStore } from "../../Connexion/LocalUserStore";
@@ -14,6 +15,7 @@ import { menuIconVisiblilityStore } from "../../Stores/MenuStore";
  * This class should be responsible for any scene starting/stopping
  */
 export class GameManager {
+    private shownFaq: boolean = false;
     private playerName: string | null;
     private characterLayers: string[] | null;
     private companion: string | null;
@@ -24,6 +26,7 @@ export class GameManager {
     private scenePlugin!: Phaser.Scenes.ScenePlugin;
 
     constructor() {
+        this.shownFaq = localUserStore.getFaqShown();
         this.playerName = localUserStore.getName();
         this.characterLayers = localUserStore.getCharacterLayers();
         this.companion = localUserStore.getCompanion();
@@ -37,7 +40,9 @@ export class GameManager {
 
         //If player name was not set show login scene with player name
         //If Room si not public and Auth was not set, show login scene to authenticate user (OpenID - SSO - Anonymous)
-        if (!this.playerName || (this.startRoom.authenticationMandatory && !localUserStore.getAuthToken())) {
+        if (!this.shownFaq) {
+            return FAQSceneName;
+        } else if (!this.playerName || (this.startRoom.authenticationMandatory && !localUserStore.getAuthToken())) {
             return LoginSceneName;
         } else if (!this.characterLayers || !this.characterLayers.length) {
             return SelectCharacterSceneName;
@@ -47,6 +52,11 @@ export class GameManager {
             this.activeMenuSceneAndHelpCameraSettings();
             return this.startRoom.key;
         }
+    }
+
+    public setShownFaq(shown: boolean): void {
+        this.shownFaq = shown;
+        localUserStore.setFaqShown(shown);
     }
 
     public setPlayerName(name: string): void {
