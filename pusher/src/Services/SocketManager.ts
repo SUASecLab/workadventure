@@ -616,28 +616,28 @@ export class SocketManager implements ZoneEventListener {
         playGlobalMessageEvent: PlayGlobalMessage
     ): Promise<void> {
         if (!client.tags.includes("admin")) {
-            throw "Client is not an admin!";
-        }
-
-        const clientRoomUrl = client.roomId;
-        let tabUrlRooms: string[];
-
-        if (playGlobalMessageEvent.getBroadcasttoworld()) {
-            tabUrlRooms = await adminApi.getUrlRoomsFromSameWorld(clientRoomUrl);
+            console.log("Client is not an admin!");
         } else {
-            tabUrlRooms = [clientRoomUrl];
-        }
+            const clientRoomUrl = client.roomId;
+            let tabUrlRooms: string[];
 
-        const roomMessage = new AdminRoomMessage();
-        roomMessage.setMessage(playGlobalMessageEvent.getContent());
-        roomMessage.setType(playGlobalMessageEvent.getType());
+            if (playGlobalMessageEvent.getBroadcasttoworld()) {
+                tabUrlRooms = await adminApi.getUrlRoomsFromSameWorld(clientRoomUrl);
+            } else {
+                tabUrlRooms = [clientRoomUrl];
+            }
 
-        for (const roomUrl of tabUrlRooms) {
-            const apiRoom = await apiClientRepository.getClient(roomUrl);
-            roomMessage.setRoomid(roomUrl);
-            apiRoom.sendAdminMessageToRoom(roomMessage, (response) => {
-                return;
-            });
+            const roomMessage = new AdminRoomMessage();
+            roomMessage.setMessage(playGlobalMessageEvent.getContent());
+            roomMessage.setType(playGlobalMessageEvent.getType());
+
+            for (const roomUrl of tabUrlRooms) {
+                const apiRoom = await apiClientRepository.getClient(roomUrl);
+                roomMessage.setRoomid(roomUrl);
+                apiRoom.sendAdminMessageToRoom(roomMessage, (response) => {
+                    return;
+                });
+            }
         }
     }
 }
