@@ -657,7 +657,8 @@ export class SocketManager implements ZoneEventListener {
         playGlobalMessageEvent: PlayGlobalMessage
     ): Promise<void> {
         if (!client.tags.includes("admin")) {
-            throw new Error("Client is not an admin!");
+            console.log("Global message not sent: Client is not an admin!");
+            return;
         }
 
         const clientRoomUrl = client.roomId;
@@ -666,19 +667,26 @@ export class SocketManager implements ZoneEventListener {
         if (playGlobalMessageEvent.getBroadcasttoworld()) {
             tabUrlRooms = await adminApi.getUrlRoomsFromSameWorld(clientRoomUrl);
         } else {
-            tabUrlRooms = [clientRoomUrl];
-        }
+            const clientRoomUrl = client.roomId;
+            let tabUrlRooms: string[];
 
-        const roomMessage = new AdminRoomMessage();
-        roomMessage.setMessage(playGlobalMessageEvent.getContent());
-        roomMessage.setType(playGlobalMessageEvent.getType());
+            if (playGlobalMessageEvent.getBroadcasttoworld()) {
+                tabUrlRooms = await adminApi.getUrlRoomsFromSameWorld(clientRoomUrl);
+            } else {
+                tabUrlRooms = [clientRoomUrl];
+            }
 
-        for (const roomUrl of tabUrlRooms) {
-            const apiRoom = await apiClientRepository.getClient(roomUrl);
-            roomMessage.setRoomid(roomUrl);
-            apiRoom.sendAdminMessageToRoom(roomMessage, (response) => {
-                return;
-            });
+            const roomMessage = new AdminRoomMessage();
+            roomMessage.setMessage(playGlobalMessageEvent.getContent());
+            roomMessage.setType(playGlobalMessageEvent.getType());
+
+            for (const roomUrl of tabUrlRooms) {
+                const apiRoom = await apiClientRepository.getClient(roomUrl);
+                roomMessage.setRoomid(roomUrl);
+                apiRoom.sendAdminMessageToRoom(roomMessage, (response) => {
+                    return;
+                });
+            }
         }
     }
 }
