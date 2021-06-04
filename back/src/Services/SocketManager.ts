@@ -61,6 +61,7 @@ import { Zone } from "../Model/Zone";
 import Debug from "debug";
 import { Admin } from "../Model/Admin";
 import crypto from "crypto";
+import { MAX_USERNAME_LENGTH } from "../Enum/EnvironmentVariable";
 import QueryCase = QueryMessage.QueryCase;
 
 const debug = Debug("sockermanager");
@@ -89,6 +90,30 @@ export class SocketManager {
         clientEventsEmitter.registerToClientLeave((clientUUid: string, roomId: string) => {
             gaugeManager.decNbClientPerRoomGauge(roomId);
         });
+    }
+
+    public sendBanMessage(socket: UserSocket, name: string) {
+        console.log('Invalid username detected: ' + name);
+        if (!socket.writable) {
+            console.warn('Socket was aborted');
+        }
+
+        // send ban message
+        const banMessage = new BanUserMessage();
+        banMessage.setType('ban');
+        banMessage.setMessage('Username manipulation detected. You have been disconnected from the game.');
+
+        const serverToClientMessageBan = new ServerToClientMessage();
+        serverToClientMessageBan.setSendusermessage(banMessage);
+        socket.write(serverToClientMessageBan);
+        setTimeout(() => {
+            socket.end();
+            console.log('Connection to ' + name + ' has been terminated');
+        }, 0);
+    }
+
+    public isUserNameValid(value: unknown): boolean {
+        return typeof value === "string" && value.length > 0 && value.length <= MAX_USERNAME_LENGTH && /\S/.test(value);
     }
 
     public async handleJoinRoom(
