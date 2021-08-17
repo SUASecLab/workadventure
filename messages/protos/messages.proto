@@ -85,6 +85,15 @@ message QueryJitsiJwtMessage {
   string tag = 2; // FIXME: rather than reading the tag from the query, we should read it from the current map!
 }
 
+message QueryCowebsiteAuthenticationJwtMessage {
+  string url = 1;
+  string name = 2;
+  bool allowApi = 3;
+  string allowPolicy = 4;
+  int32 widthPercent = 5;
+  bool closable = 6;
+}
+
 message FollowRequestMessage {
   int32 leader = 1;
 }
@@ -117,6 +126,7 @@ message ClientToServerMessage {
     FollowRequestMessage followRequestMessage = 15;
     FollowConfirmationMessage followConfirmationMessage = 16;
     FollowAbortMessage followAbortMessage = 17;
+    QueryCowebsiteAuthenticationJwtMessage queryCowebsiteAuthenticationJwtMessage = 18;
   }
 }
 
@@ -260,6 +270,15 @@ message SendUserMessage{
   string message = 2;
 }
 
+message SendCowebsiteAuthenticationJwtMessage {
+  string url = 1;
+  string token = 2;
+  bool allowApi = 3;
+  string allowPolicy = 4;
+  int32 widthPercent = 5;
+  bool closable = 6;
+}
+
 message WorldFullWarningMessage{
 }
 message WorldFullWarningToRoomMessage{
@@ -316,6 +335,7 @@ message ServerToClientMessage {
     FollowConfirmationMessage followConfirmationMessage = 22;
     FollowAbortMessage followAbortMessage = 23;
     InvalidTextureMessage invalidTextureMessage = 24;
+    SendCowebsiteAuthenticationJwtMessage sendCowebsiteAuthenticationJwtMessage = 25;
   }
 }
 
@@ -403,6 +423,7 @@ message PusherToBackMessage {
     FollowRequestMessage followRequestMessage = 16;
     FollowConfirmationMessage followConfirmationMessage = 17;
     FollowAbortMessage followAbortMessage = 18;
+    QueryCowebsiteAuthenticationJwtMessage queryCowebsiteAuthenticationJwtMessage = 19;
   }
 }
 

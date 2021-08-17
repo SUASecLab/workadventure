@@ -2,6 +2,7 @@ export enum GameMapProperties {
     ALLOW_API = "allowApi",
     AUDIO_LOOP = "audioLoop",
     AUDIO_VOLUME = "audioVolume",
+    AUTHENTICATE = "authenticate",
     COLLIDES = "collides",
     DEFAULT = "default",
     EXIT_URL = "exitUrl",

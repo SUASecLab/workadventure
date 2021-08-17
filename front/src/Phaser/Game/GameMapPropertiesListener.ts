@@ -13,6 +13,7 @@ import { SimpleCoWebsite } from "../../WebRtc/CoWebsite/SimpleCoWebsite";
 import { jitsiFactory } from "../../WebRtc/JitsiFactory";
 import { JITSI_PRIVATE_MODE, JITSI_URL } from "../../Enum/EnvironmentVariable";
 import { JitsiCoWebsite } from "../../WebRtc/CoWebsite/JitsiCoWebsite";
+import { AuthenticatedCoWebsite } from "../../WebRtc/CoWebsite/AuthenticatedCoWebsite";
 import { audioManagerFileStore, audioManagerVisibilityStore } from "../../Stores/AudioManagerStore";
 import { iframeListener } from "../../Api/IframeListener";
 import { Room } from "../../Connexion/Room";
@@ -27,7 +28,7 @@ export class GameMapPropertiesListener {
     private coWebsitesOpenByLayer = new Map<ITiledMapLayer, OpenCoWebsite>();
     private coWebsitesActionTriggerByLayer = new Map<ITiledMapLayer, string>();
 
-    constructor(private scene: GameScene, private gameMap: GameMap) {}
+    constructor(private scene: GameScene, private gameMap: GameMap, private playerName: string) {}
 
     register() {
         // Website on new tab
@@ -187,6 +188,7 @@ export class GameMapPropertiesListener {
                         return;
                     }
 
+                    let authenticationProperty: boolean | undefined;
                     let openWebsiteProperty: string | undefined;
                     let allowApiProperty: boolean | undefined;
                     let websitePolicyProperty: string | undefined;
@@ -218,6 +220,8 @@ export class GameMapPropertiesListener {
                             case GameMapProperties.OPEN_WEBSITE_TRIGGER_MESSAGE:
                                 websiteTriggerMessageProperty = property.value as string | undefined;
                                 break;
+                            case GameMapProperties.AUTHENTICATE:
+                                authenticationProperty = property.value as boolean | undefined;
                         }
                     });
 
@@ -246,19 +250,26 @@ export class GameMapPropertiesListener {
                     };
 
                     const openCoWebsiteFunction = () => {
-                        const coWebsite = new SimpleCoWebsite(
-                            new URL(openWebsiteProperty ?? "", this.scene.MapUrlFile),
-                            allowApiProperty,
-                            websitePolicyProperty,
-                            websiteWidthProperty,
-                            false
-                        );
+                        if (authenticationProperty) {
+                            this.scene.connection?.emitQueryCowebsiteAuthenticationJwtMessage(openWebsiteProperty ?? "", this.playerName, allowApiProperty ?? false, websitePolicyProperty ?? "", websiteWidthProperty ?? 100, false);
 
-                        coWebsiteOpen.coWebsite = coWebsite;
+                            layoutManagerActionStore.removeAction(actionId);
+                            return;
+                        } else {
+                            const coWebsite = new SimpleCoWebsite(
+                                new URL(openWebsiteProperty ?? "", this.scene.MapUrlFile),
+                                allowApiProperty,
+                                websitePolicyProperty,
+                                websiteWidthProperty,
+                                false
+                            );
 
-                        coWebsiteManager.addCoWebsiteToStore(coWebsite, websitePositionProperty);
+                            coWebsiteOpen.coWebsite = coWebsite;
 
-                        loadCoWebsiteFunction(coWebsite);
+                            coWebsiteManager.addCoWebsiteToStore(coWebsite, websitePositionProperty);
+
+                            loadCoWebsiteFunction(coWebsite);
+                        }
                     };
 
                     if (
@@ -304,6 +315,11 @@ export class GameMapPropertiesListener {
         // Close opened co-websites on leave the layer who contain the property.
         this.gameMap.onLeaveLayer((oldLayers) => {
             const handler = () => {
+                coWebsiteManager.getCoWebsites().forEach((coWebsite) => {
+                    if (coWebsite instanceof AuthenticatedCoWebsite) {
+                        coWebsiteManager.closeCoWebsite(coWebsite);
+                    }
+                });
                 oldLayers.forEach((layer) => {
                     if (!layer.properties) {
                         return;

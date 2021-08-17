@@ -13,6 +13,7 @@ import {
     PlayGlobalMessage,
     ReportPlayerMessage,
     QueryJitsiJwtMessage,
+    QueryCowebsiteAuthenticationJwtMessage,
     SendUserMessage,
     ServerToClientMessage,
     CompanionMessage,
@@ -561,6 +562,11 @@ export class IoSocketController {
                     );
                 } else if (message.hasFollowabortmessage()) {
                     socketManager.handleFollowAbort(client, message.getFollowabortmessage() as FollowAbortMessage);
+                } else if (message.hasQuerycowebsiteauthenticationjwtmessage()) {
+                    socketManager.handleQueryCowebsiteAuthenticationJwtMessage(
+                        client,
+                        message.getQuerycowebsiteauthenticationjwtmessage() as QueryCowebsiteAuthenticationJwtMessage
+                    );
                 }
 
                 /* Ok is false if backpressure was built up, wait for drain */

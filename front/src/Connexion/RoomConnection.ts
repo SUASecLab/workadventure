@@ -43,6 +43,7 @@ import {
     WebRtcDisconnectMessage as WebRtcDisconnectMessageTsProto,
     PlayGlobalMessage as PlayGlobalMessageTsProto,
     StopGlobalMessage as StopGlobalMessageTsProto,
+    SendCowebsiteAuthenticationJwtMessage as SendCowebsiteAuthenticationJwtMessageProto,
     SendJitsiJwtMessage as SendJitsiJwtMessageTsProto,
     SendUserMessage as SendUserMessageTsProto,
     BanUserMessage as BanUserMessageTsProto,
@@ -100,6 +101,9 @@ export class RoomConnection implements RoomConnection {
 
     private readonly _sendJitsiJwtMessageStream = new Subject<SendJitsiJwtMessageTsProto>();
     public readonly sendJitsiJwtMessageStream = this._sendJitsiJwtMessageStream.asObservable();
+
+    private readonly _sendCowebsiteAuthenticationJwtMessageStream = new Subject<SendCowebsiteAuthenticationJwtMessageProto>();
+    public readonly sendCowebsiteAuthenticationJwtMessageStream = this._sendCowebsiteAuthenticationJwtMessageStream.asObservable();
 
     private readonly _worldFullMessageStream = new Subject<string | null>();
     public readonly worldFullMessageStream = this._worldFullMessageStream.asObservable();
@@ -477,6 +481,10 @@ export class RoomConnection implements RoomConnection {
                     }
                     break;
                 }
+                case "sendCowebsiteAuthenticationJwtMessage": {
+                    this._sendCowebsiteAuthenticationJwtMessageStream.next(message.sendCowebsiteAuthenticationJwtMessage);
+                    break;
+                }
                 case "errorMessage": {
                     this._errorMessageStream.next(message.errorMessage);
                     console.error("An error occurred server side: " + message.errorMessage.message);
@@ -807,6 +815,24 @@ export class RoomConnection implements RoomConnection {
                     jitsiRoom,
                     tag: tag ?? "", // empty string is sent as "undefined" by ts-proto
                     // TODO: when we migrated "pusher" to ts-proto, migrate this to a StringValue
+                },
+            },
+        }).finish();
+
+        this.socket.send(bytes);
+    }
+
+    public emitQueryCowebsiteAuthenticationJwtMessage(url: string, name: string, allowApi: boolean, allowPolicy: string, widthPercent: number, closable: boolean): void {
+        const bytes = ClientToServerMessageTsProto.encode({
+            message: {
+                $case: "queryCowebsiteAuthenticationJwtMessage",
+                queryCowebsiteAuthenticationJwtMessage: {
+                    url,
+                    name,
+                    allowApi: allowApi,
+                    allowPolicy: allowPolicy,
+                    widthPercent: widthPercent,
+                    closable: closable
                 },
             },
         }).finish();

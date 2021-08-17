@@ -96,6 +96,7 @@ import { StringUtils } from "../../Utils/StringUtils";
 import { startLayerNamesStore } from "../../Stores/StartLayerNamesStore";
 import { JitsiCoWebsite } from "../../WebRtc/CoWebsite/JitsiCoWebsite";
 import { SimpleCoWebsite } from "../../WebRtc/CoWebsite/SimpleCoWebsite";
+import { AuthenticatedCoWebsite} from "../../WebRtc/CoWebsite/AuthenticatedCoWebsite"
 import type { CoWebsite } from "../../WebRtc/CoWebsite/CoWesbite";
 import type { VideoPeer } from "../../WebRtc/VideoPeer";
 import CancelablePromise from "cancelable-promise";
@@ -623,8 +624,8 @@ export class GameScene extends DirtyScene {
             this.cameraManager.updateCameraOffset(box)
         );
 
-        new GameMapPropertiesListener(this, this.gameMap).register();
-
+        new GameMapPropertiesListener(this, this.gameMap, this.playerName).register();
+        
         if (!this.room.isDisconnected()) {
             this.scene.sleep();
             this.connect();
@@ -860,6 +861,17 @@ export class GameScene extends DirtyScene {
 
                 this.messageSubscription = this.connection.worldFullMessageStream.subscribe((message) => {
                     this.showWorldFullError(message);
+                });
+
+                /**
+                 * Triggered when received authentication token for cowebsite
+                 */
+                this.connection.sendCowebsiteAuthenticationJwtMessageStream.subscribe((message) => {
+                    const coWebsite = new AuthenticatedCoWebsite(new URL(message.url), message.token, message.allowApi, message.allowPolicy, message.widthPercent, message.closable);
+                    coWebsiteManager.addCoWebsiteToStore(coWebsite, 0);
+                    coWebsiteManager.loadCoWebsite(coWebsite).catch((err) => {
+                        console.error(err);
+                    });
                 });
 
                 // When connection is performed, let's connect SimplePeer
@@ -1366,7 +1378,7 @@ ${escapedMessage}
                             //Create new colliders with the new GameMap
                             this.createCollisionWithPlayer();
                             //Create new trigger with the new GameMap
-                            new GameMapPropertiesListener(this, this.gameMap).register();
+                            new GameMapPropertiesListener(this, this.gameMap, this.playerName).register();
                             resolve(newFirstgid);
                         });
                     });
@@ -2141,6 +2153,10 @@ ${escapedMessage}
 
         analyticsClient.enteredJitsi(roomName, this.room.id);
     }
+
+    // private loadCowebsite(url: string, base: string, allowApi?: boolean, allowPolicy?: string, websiteRatio?: number, token?: string): void {
+    //     coWebsiteManager.loadCoWebsite(url, base, allowApi, allowPolicy, websiteRatio, token);
+    // }
 
     //todo: put this into an 'orchestrator' scene (EntryScene?)
     private bannedUser() {
