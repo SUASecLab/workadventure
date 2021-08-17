@@ -172,14 +172,19 @@ class CoWebsiteManager {
         base: string,
         allowApi?: boolean,
         allowPolicy?: string,
-        widthPercent?: number
+        widthPercent?: number,
+        token?: string
     ): void {
         this.load();
         this.cowebsiteMainDom.innerHTML = ``;
 
         const iframe = document.createElement("iframe");
         iframe.id = "cowebsite-iframe";
-        iframe.src = new URL(url, base).toString();
+        const iframeUrl = new URL(url, base);
+        if (token) {
+            iframeUrl.searchParams.set('token', token);
+        }
+        iframe.src = iframeUrl.toString();
         if (allowPolicy) {
             iframe.allow = allowPolicy;
         }

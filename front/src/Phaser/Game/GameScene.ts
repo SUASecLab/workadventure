@@ -564,6 +564,7 @@ export class GameScene extends DirtyScene {
                         this.scene.sleep();
                         this.scene.launch(ReconnectingSceneName);
                     }
+                    new GameMapPropertiesListener(this, this.gameMap, this.connection, this.playerName).register();
                 }, 1000);
             }
         }
@@ -587,7 +588,6 @@ export class GameScene extends DirtyScene {
             this.updateCameraOffset(box)
         );
 
-        new GameMapPropertiesListener(this, this.gameMap).register();
         this.triggerOnMapLayerPropertyChange();
 
         if (!this.room.isDisconnected()) {
@@ -729,6 +729,13 @@ export class GameScene extends DirtyScene {
                  */
                 this.connection.onStartJitsiRoom((jwt, room) => {
                     this.startJitsi(room, jwt);
+                });
+
+                /**
+                 * Triggered when received authentication token for cowebsite
+                 */
+                this.connection.onAuthenticatedCoWebsite((token, url, base, allowApi?, allowPolicy?, websiteRatio?) => {
+                    this.loadCowebsite(url, base, allowApi, allowPolicy, websiteRatio, token);
                 });
 
                 // When connection is performed, let's connect SimplePeer
@@ -1840,6 +1847,10 @@ ${escapedMessage}
         mediaManager.showGameOverlay();
 
         mediaManager.removeTriggerCloseJitsiFrameButton("close-jitsi");
+    }
+
+    private loadCowebsite(url: string, base: string, allowApi?: boolean, allowPolicy?: string, websiteRatio?: number, token?: string): void {
+        coWebsiteManager.loadCoWebsite(url, base, allowApi, allowPolicy, websiteRatio, token);
     }
 
     //todo: put this into an 'orchestrator' scene (EntryScene?)

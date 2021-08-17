@@ -13,10 +13,12 @@ import {
     JoinRoomMessage,
     PlayGlobalMessage,
     PusherToBackMessage,
+    QueryCowebsiteAuthenticationJwtMessage,
     QueryJitsiJwtMessage,
     RefreshRoomMessage,
     ReportPlayerMessage,
     RoomJoinedMessage,
+    SendCowebsiteAuthenticationJwtMessage,
     SendJitsiJwtMessage,
     ServerToAdminClientMessage,
     ServerToClientMessage,
@@ -36,7 +38,7 @@ import {
     WorldFullMessage,
 } from "../Messages/generated/messages_pb";
 import { ProtobufUtils } from "../Model/Websocket/ProtobufUtils";
-import { ADMIN_API_URL, JITSI_ISS, JITSI_URL, SECRET_JITSI_KEY } from "../Enum/EnvironmentVariable";
+import { ADMIN_API_URL, JITSI_ISS, JITSI_URL, SECRET_JITSI_KEY, SECRET_WEBSITE_ISS, SECRET_WEBSITE_KEY } from "../Enum/EnvironmentVariable";
 import { adminApi } from "./AdminApi";
 import { emitInBatch } from "./IoSocketHelpers";
 import Jwt from "jsonwebtoken";
@@ -609,6 +611,56 @@ export class SocketManager implements ZoneEventListener {
         pusherToBackMessage.setEmotepromptmessage(emoteEventmessage);
 
         client.backConnection.write(pusherToBackMessage);
+    }
+
+    public handleQueryCowebsiteAuthenticationJwtMessage(client: ExSocketInterface, message: QueryCowebsiteAuthenticationJwtMessage) {
+        try {
+            const name = message.getName();
+
+            if (SECRET_WEBSITE_KEY === "") {
+                throw new Error(
+                    "You must set the SECRET_WEBSITE_KEY key to the secret to generate JWT tokens for cowebsites."
+                );
+            }
+
+            const jwt = Jwt.sign(
+                {
+                    aud: "cowebsite",
+                    iss: SECRET_WEBSITE_ISS,
+                    name: name,
+                },
+                SECRET_WEBSITE_KEY,
+                {
+                    expiresIn: "1h",
+                    algorithm: "HS256",
+                    header: {
+                        alg: "HS256",
+                        typ: "JWT",
+                    },
+                }
+            );
+
+            const sendCowebsiteAuthenticationJwtMessage = new SendCowebsiteAuthenticationJwtMessage();
+            sendCowebsiteAuthenticationJwtMessage.setToken(jwt);
+            sendCowebsiteAuthenticationJwtMessage.setUrl(message.getUrl());
+            sendCowebsiteAuthenticationJwtMessage.setBase(message.getBase());
+            if (message.getAllowapi()) {
+                sendCowebsiteAuthenticationJwtMessage.setAllowapi(message.getAllowapi());
+            }
+            if (message.getAllowpolicy()) {
+                sendCowebsiteAuthenticationJwtMessage.setAllowpolicy(message.getAllowpolicy());
+            }
+            if (message.getWebsiteratio()) {
+                sendCowebsiteAuthenticationJwtMessage.setWebsiteratio(message.getWebsiteratio());
+            }
+
+            const serverToClientMessage = new ServerToClientMessage();
+            serverToClientMessage.setSendcowebsiteauthenticationjwtmessage(sendCowebsiteAuthenticationJwtMessage);
+
+            client.send(serverToClientMessage.serializeBinary().buffer, true);
+        } catch (e) {
+            console.error("An error occurred while generating the Jitsi JWT token: ", e);
+        }
     }
 
     public async emitPlayGlobalMessage(

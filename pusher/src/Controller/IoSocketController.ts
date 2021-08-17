@@ -13,6 +13,7 @@ import {
     PlayGlobalMessage,
     ReportPlayerMessage,
     QueryJitsiJwtMessage,
+    QueryCowebsiteAuthenticationJwtMessage,
     SendUserMessage,
     ServerToClientMessage,
     CompanionMessage,
@@ -387,6 +388,11 @@ export class IoSocketController {
                     socketManager.handleEmotePromptMessage(
                         client,
                         message.getEmotepromptmessage() as EmotePromptMessage
+                    );
+                } else if (message.hasQuerycowebsiteauthenticationjwtmessage()) {
+                    socketManager.handleQueryCowebsiteAuthenticationJwtMessage(
+                        client,
+                        message.getQuerycowebsiteauthenticationjwtmessage() as QueryCowebsiteAuthenticationJwtMessage
                     );
                 }
 

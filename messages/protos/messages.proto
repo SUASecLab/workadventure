@@ -80,6 +80,15 @@ message QueryJitsiJwtMessage {
   string tag = 2; // FIXME: rather than reading the tag from the query, we should read it from the current map!
 }
 
+message QueryCowebsiteAuthenticationJwtMessage {
+  string name = 1;
+  string url = 2;
+  string base = 3;
+  bool allowApi = 4;
+  string allowPolicy = 5;
+  int32 websiteRatio = 6;
+}
+
 message ClientToServerMessage {
   oneof message {
     UserMovesMessage userMovesMessage = 2;
@@ -95,6 +104,7 @@ message ClientToServerMessage {
     QueryJitsiJwtMessage queryJitsiJwtMessage = 12;
     EmotePromptMessage emotePromptMessage = 13;
     VariableMessage variableMessage = 14;
+    QueryCowebsiteAuthenticationJwtMessage queryCowebsiteAuthenticationJwtMessage = 15;
   }
 }
 
@@ -259,6 +269,15 @@ message BanUserMessage{
   string message = 2;
 }
 
+message SendCowebsiteAuthenticationJwtMessage {
+  string token = 1;
+  string url = 2;
+  string base = 3;
+  bool allowApi = 4;
+  string allowPolicy = 5;
+  int32 websiteRatio = 6;
+}
+
 message ServerToClientMessage {
   oneof message {
     BatchMessage batchMessage = 1;
@@ -281,6 +300,7 @@ message ServerToClientMessage {
     WorldConnexionMessage worldConnexionMessage = 18;
     EmoteEventMessage emoteEventMessage = 19;
     TokenExpiredMessage tokenExpiredMessage = 20;
+    SendCowebsiteAuthenticationJwtMessage sendCowebsiteAuthenticationJwtMessage = 21;
   }
 }
 
@@ -360,6 +380,7 @@ message PusherToBackMessage {
     BanUserMessage banUserMessage = 13;
     EmotePromptMessage emotePromptMessage = 14;
     VariableMessage variableMessage = 15;
+    QueryCowebsiteAuthenticationJwtMessage queryCowebsiteAuthenticationJwtMessage = 16;
   }
 }
 

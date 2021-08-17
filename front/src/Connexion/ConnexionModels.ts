@@ -32,6 +32,7 @@ export enum EventMessage {
     USER_MESSAGE = "user-message",
     START_JITSI_ROOM = "start-jitsi-room",
     SET_VARIABLE = "set-variable",
+    AUTHENTICATED_COWEBSITE = "authenticated-cowebsite",
 }
 
 export interface PointInterface {

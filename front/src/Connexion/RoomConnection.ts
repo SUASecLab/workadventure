@@ -24,7 +24,9 @@ import {
     WebRtcStartMessage,
     ReportPlayerMessage,
     TeleportMessageMessage,
+    QueryCowebsiteAuthenticationJwtMessage,
     QueryJitsiJwtMessage,
+    SendCowebsiteAuthenticationJwtMessage,
     SendJitsiJwtMessage,
     CharacterLayerMessage,
     PingMessage,
@@ -255,6 +257,8 @@ export class RoomConnection implements RoomConnection {
                 warningContainerStore.activateWarningContainer();
             } else if (message.hasRefreshroommessage()) {
                 //todo: implement a way to notify the user the room was refreshed.
+            } else if (message.hasSendcowebsiteauthenticationjwtmessage()) {
+                this.dispatch(EventMessage.AUTHENTICATED_COWEBSITE, message.getSendcowebsiteauthenticationjwtmessage());
             } else {
                 throw new Error("Unknown message received");
             }
@@ -663,6 +667,33 @@ export class RoomConnection implements RoomConnection {
     public onStartJitsiRoom(callback: (jwt: string, room: string) => void): void {
         this.onMessage(EventMessage.START_JITSI_ROOM, (message: SendJitsiJwtMessage) => {
             callback(message.getJwt(), message.getJitsiroom());
+        });
+    }
+
+    public emitQueryCowebsiteAuthenticationJwtMessage(name: string, url: string, base: string, allowApi?: boolean, allowPolicy?: string, websiteRatio?: number): void {
+        const queryCowebsiteAuthenticationJwtMessage = new QueryCowebsiteAuthenticationJwtMessage();
+        queryCowebsiteAuthenticationJwtMessage.setName(name);
+        queryCowebsiteAuthenticationJwtMessage.setUrl(url);
+        queryCowebsiteAuthenticationJwtMessage.setBase(base);
+        if (allowApi) {
+            queryCowebsiteAuthenticationJwtMessage.setAllowapi(allowApi);
+        }
+        if (allowPolicy) {
+            queryCowebsiteAuthenticationJwtMessage.setAllowpolicy(allowPolicy);
+        }
+        if (websiteRatio) {
+            queryCowebsiteAuthenticationJwtMessage.setWebsiteratio(websiteRatio);
+        }
+
+        const clientToServerMessage = new ClientToServerMessage();
+        clientToServerMessage.setQuerycowebsiteauthenticationjwtmessage(queryCowebsiteAuthenticationJwtMessage);
+
+        this.socket.send(clientToServerMessage.serializeBinary().buffer);
+    }
+
+    public onAuthenticatedCoWebsite(callback: (token: string, url: string, base: string, allowApi?: boolean, allowPolicy?: string, websiteRatio?: number) => void): void {
+        this.onMessage(EventMessage.AUTHENTICATED_COWEBSITE, (message: SendCowebsiteAuthenticationJwtMessage) => {
+            callback(message.getToken(), message.getUrl(), message.getBase(), message.getAllowapi(), message.getAllowpolicy(), message.getWebsiteratio());
         });
     }
 

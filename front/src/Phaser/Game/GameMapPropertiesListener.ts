@@ -8,9 +8,10 @@ import {
     TRIGGER_WEBSITE_PROPERTIES,
     WEBSITE_MESSAGE_PROPERTIES,
 } from "../../WebRtc/LayoutManager";
+import type { RoomConnection } from "../../Connexion/RoomConnection";
 
 export class GameMapPropertiesListener {
-    constructor(private scene: GameScene, private gameMap: GameMap) {}
+    constructor(private scene: GameScene, private gameMap: GameMap, private connection: RoomConnection | undefined, private playerName: string) {}
 
     register() {
         this.gameMap.onPropertyChange("openTab", (newValue, oldvalue, allProps) => {
@@ -42,13 +43,25 @@ export class GameMapPropertiesListener {
                 coWebsiteManager.closeCoWebsite();
             } else {
                 const openWebsiteFunction = () => {
-                    coWebsiteManager.loadCoWebsite(
-                        newValue as string,
-                        this.scene.MapUrlFile,
-                        allProps.get("openWebsiteAllowApi") as boolean | undefined,
-                        allProps.get("openWebsitePolicy") as string | undefined,
-                        allProps.get("openWebsiteWidth") as number | undefined
-                    );
+                    const authenticate = allProps.get("authenticate") as boolean | undefined;
+                    if (authenticate) {
+                        this.connection?.emitQueryCowebsiteAuthenticationJwtMessage(
+                            this.playerName,
+                            newValue as string,
+                            this.scene.MapUrlFile,
+                            allProps.get("openWebsiteAllowApi") as boolean | undefined,
+                            allProps.get("openWebsitePolicy") as string | undefined,
+                            allProps.get("openWebsiteWidth") as number | undefined
+                        );
+                    } else {
+                        coWebsiteManager.loadCoWebsite(
+                            newValue as string,
+                            this.scene.MapUrlFile,
+                            allProps.get("openWebsiteAllowApi") as boolean | undefined,
+                            allProps.get("openWebsitePolicy") as string | undefined,
+                            allProps.get("openWebsiteWidth") as number | undefined
+                        );
+                    }
                     layoutManagerActionStore.removeAction("openWebsite");
                 };
                 const openWebsiteTriggerValue = allProps.get(TRIGGER_WEBSITE_PROPERTIES);
