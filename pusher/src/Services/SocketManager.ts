@@ -18,12 +18,14 @@ import {
     RefreshRoomMessage,
     ReportPlayerMessage,
     RoomJoinedMessage,
+    SendBBBMeetingUrlMessage,
     SendCowebsiteAuthenticationJwtMessage,
     SendJitsiJwtMessage,
     ServerToAdminClientMessage,
     ServerToClientMessage,
     SetPlayerDetailsMessage,
     SilentMessage,
+    StartBBBMessage,
     SubMessage,
     UserJoinedRoomMessage,
     UserLeftMessage,
@@ -38,7 +40,18 @@ import {
     WorldFullMessage,
 } from "../Messages/generated/messages_pb";
 import { ProtobufUtils } from "../Model/Websocket/ProtobufUtils";
-import { ADMIN_API_URL, JITSI_ISS, JITSI_URL, SECRET_JITSI_KEY, SECRET_WEBSITE_ISS, SECRET_WEBSITE_KEY } from "../Enum/EnvironmentVariable";
+import {
+    ADMIN_API_URL,
+    JITSI_ISS,
+    JITSI_URL,
+    SECRET_JITSI_KEY,
+    SECRET_WEBSITE_ISS,
+    SECRET_WEBSITE_KEY,
+    BBB_URL,
+    BBB_SECRET,
+    BBB_ATTENDEE_SECRET,
+    BBB_MODERATOR_SECRET,
+} from "../Enum/EnvironmentVariable";
 import { adminApi } from "./AdminApi";
 import { emitInBatch } from "./IoSocketHelpers";
 import Jwt from "jsonwebtoken";
@@ -51,6 +64,9 @@ import { ExAdminSocketInterface } from "_Model/Websocket/ExAdminSocketInterface"
 import { WebSocket } from "uWebSockets.js";
 import { isRoomRedirect } from "./AdminApi/RoomRedirect";
 import { CharacterTexture } from "./AdminApi/CharacterTexture";
+
+const bbb = require('bigbluebutton-js')
+const crypto = require('crypto')
 
 const debug = Debug("socket");
 
@@ -660,6 +676,51 @@ export class SocketManager implements ZoneEventListener {
             client.send(serverToClientMessage.serializeBinary().buffer, true);
         } catch (e) {
             console.error("An error occurred while generating the Jitsi JWT token: ", e);
+        }
+    }
+
+    public handleStartBBBMessage(client: ExSocketInterface, message: StartBBBMessage) {
+        try {
+            const name = message.getName();
+            const meetingName = message.getMeetingname();
+
+            var roomId = client.roomId;
+            if (roomId.includes("/_/")) {
+                roomId = roomId.split("/_/")[1];
+            } else {
+                roomId = roomId.split("/@/")[1];
+            }
+            roomId = roomId.split("/").join("-");
+
+            // find out whether user is admin
+            const isAdmin = client.tags.includes("admin");
+
+            let api = bbb.api(BBB_URL, BBB_SECRET);
+            let http = bbb.http;
+
+            let attendeePW = crypto.createHash('sha256').update(BBB_ATTENDEE_SECRET).digest('hex');
+            let moderatorPW = crypto.createHash('sha256').update(BBB_MODERATOR_SECRET).digest('hex');
+            const fullMeetingName = crypto.createHash('sha256').update(roomId + meetingName.split(" ").join("")).digest('hex');
+
+            let meetingCreateUrl = api.administration.create(meetingName, fullMeetingName, {
+                attendeePW: attendeePW,
+                moderatorPW: moderatorPW
+            });
+
+            http(meetingCreateUrl).then((result: unknown) => {
+                const password = isAdmin ? moderatorPW : attendeePW;
+                let meetingUrl = api.administration.join(name, fullMeetingName, password);
+
+                const sendBBBMeetingUrlMessage = new SendBBBMeetingUrlMessage();
+                sendBBBMeetingUrlMessage.setUrl(meetingUrl);
+
+                const serverToClientMessage = new ServerToClientMessage();
+                serverToClientMessage.setSendbbbmeetingurlmessage(sendBBBMeetingUrlMessage);
+
+                client.send(serverToClientMessage.serializeBinary().buffer, true);
+            });
+        } catch (e) {
+            console.error("An error occured while generating the BBB meeting link: ", e);
         }
     }
 

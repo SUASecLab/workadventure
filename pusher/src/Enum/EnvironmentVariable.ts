@@ -8,6 +8,10 @@ export const ADMIN_SOCKETS_TOKEN = process.env.ADMIN_SOCKETS_TOKEN || "myapitoke
 const CPU_OVERHEAT_THRESHOLD = Number(process.env.CPU_OVERHEAT_THRESHOLD) || 80;
 const JITSI_URL: string | undefined = process.env.JITSI_URL === "" ? undefined : process.env.JITSI_URL;
 const JITSI_ISS = process.env.JITSI_ISS || "";
+const BBB_URL: string | undefined = process.env.BBB_URL === "" ? undefined: process.env.BBB_URL;
+const BBB_SECRET = process.env.BBB_SECRET || "";
+const BBB_ATTENDEE_SECRET = process.env.BBB_ATTENDEE_SECRET || "secret";
+const BBB_MODERATOR_SECRET = process.env.BBB_MODERATOR_SECRET || "supersecret";
 const SECRET_JITSI_KEY = process.env.SECRET_JITSI_KEY || "";
 const SECRET_WEBSITE_ISS = process.env.SECRET_WEBSITE_ISS || "";
 const SECRET_WEBSITE_KEY = process.env.SECRET_WEBSITE_KEY || "";
@@ -29,6 +33,10 @@ export {
     CPU_OVERHEAT_THRESHOLD,
     JITSI_URL,
     JITSI_ISS,
+    BBB_URL,
+    BBB_SECRET,
+    BBB_ATTENDEE_SECRET,
+    BBB_MODERATOR_SECRET,
     SECRET_JITSI_KEY,
     SECRET_WEBSITE_ISS,
     SECRET_WEBSITE_KEY,

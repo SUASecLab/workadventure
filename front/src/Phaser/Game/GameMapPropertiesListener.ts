@@ -7,6 +7,8 @@ import {
     ON_ACTION_TRIGGER_BUTTON,
     TRIGGER_WEBSITE_PROPERTIES,
     WEBSITE_MESSAGE_PROPERTIES,
+    TRIGGER_BBB_PROPERTIES,
+    BBB_MESSAGE_PROPERTIES,
 } from "../../WebRtc/LayoutManager";
 import type { RoomConnection } from "../../Connexion/RoomConnection";
 
@@ -79,6 +81,35 @@ export class GameMapPropertiesListener {
                     });
                 } else {
                     openWebsiteFunction();
+                }
+            }
+        });
+        this.gameMap.onPropertyChange("bbbRoom", (newValue, oldValue, allProps) => {
+            if (newValue === undefined) {
+                layoutManagerActionStore.removeAction("bbb");
+                coWebsiteManager.closeCoWebsite();
+            } else {
+                const startBBBFunction = () => {
+                    const meetingName = allProps.get("bbbRoom") as string | undefined;
+                    this.connection?.emitStartBBBMessage(this.playerName, meetingName);
+                    layoutManagerActionStore.removeAction("bbb");
+                }
+
+                const bbbTriggerValue = allProps.get(TRIGGER_BBB_PROPERTIES);
+                if (bbbTriggerValue && bbbTriggerValue === ON_ACTION_TRIGGER_BUTTON) {
+                    let message = allProps.get(BBB_MESSAGE_PROPERTIES);
+                    if (message === undefined) {
+                        message = "Press SPACE or touch here to enter BBB meeting room";
+                    }
+                    layoutManagerActionStore.addAction({
+                        uuid: "bbb",
+                        type: "message",
+                        message: message,
+                        callback: () => startBBBFunction(),
+                        userInputManager: this.scene.userInputManager,
+                    });
+                } else {
+                    startBBBFunction();
                 }
             }
         });

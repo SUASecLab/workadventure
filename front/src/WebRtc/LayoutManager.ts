@@ -16,9 +16,11 @@ export const ON_ACTION_TRIGGER_BUTTON = "onaction";
 
 export const TRIGGER_WEBSITE_PROPERTIES = "openWebsiteTrigger";
 export const TRIGGER_JITSI_PROPERTIES = "jitsiTrigger";
+export const TRIGGER_BBB_PROPERTIES = "bbbTrigger";
 
 export const WEBSITE_MESSAGE_PROPERTIES = "openWebsiteTriggerMessage";
 export const JITSI_MESSAGE_PROPERTIES = "jitsiTriggerMessage";
+export const BBB_MESSAGE_PROPERTIES = "bbbTriggerMessage";
 
 export const AUDIO_VOLUME_PROPERTY = "audioVolume";
 export const AUDIO_LOOP_PROPERTY = "audioLoop";

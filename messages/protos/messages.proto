@@ -89,6 +89,11 @@ message QueryCowebsiteAuthenticationJwtMessage {
   int32 websiteRatio = 6;
 }
 
+message StartBBBMessage {
+    string name = 1;
+    string meetingName = 2;
+}
+
 message ClientToServerMessage {
   oneof message {
     UserMovesMessage userMovesMessage = 2;
@@ -105,6 +110,7 @@ message ClientToServerMessage {
     EmotePromptMessage emotePromptMessage = 13;
     VariableMessage variableMessage = 14;
     QueryCowebsiteAuthenticationJwtMessage queryCowebsiteAuthenticationJwtMessage = 15;
+    StartBBBMessage startBBBMessage = 16;
   }
 }
 
@@ -278,6 +284,10 @@ message SendCowebsiteAuthenticationJwtMessage {
   int32 websiteRatio = 6;
 }
 
+message SendBBBMeetingUrlMessage {
+  string url = 1;
+}
+
 message ServerToClientMessage {
   oneof message {
     BatchMessage batchMessage = 1;
@@ -301,6 +311,7 @@ message ServerToClientMessage {
     EmoteEventMessage emoteEventMessage = 19;
     TokenExpiredMessage tokenExpiredMessage = 20;
     SendCowebsiteAuthenticationJwtMessage sendCowebsiteAuthenticationJwtMessage = 21;
+    SendBBBMeetingUrlMessage sendBBBMeetingUrlMessage = 22;
   }
 }
 
@@ -381,6 +392,7 @@ message PusherToBackMessage {
     EmotePromptMessage emotePromptMessage = 14;
     VariableMessage variableMessage = 15;
     QueryCowebsiteAuthenticationJwtMessage queryCowebsiteAuthenticationJwtMessage = 16;
+    StartBBBMessage startBBBMessage = 17;
   }
 }
 

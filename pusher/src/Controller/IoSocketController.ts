@@ -16,6 +16,7 @@ import {
     QueryCowebsiteAuthenticationJwtMessage,
     SendUserMessage,
     ServerToClientMessage,
+    StartBBBMessage,
     CompanionMessage,
     EmotePromptMessage,
     VariableMessage,
@@ -393,6 +394,11 @@ export class IoSocketController {
                     socketManager.handleQueryCowebsiteAuthenticationJwtMessage(
                         client,
                         message.getQuerycowebsiteauthenticationjwtmessage() as QueryCowebsiteAuthenticationJwtMessage
+                    );
+                } else if (message.hasStartbbbmessage()) {
+                    socketManager.handleStartBBBMessage(
+                        client,
+                        message.getStartbbbmessage() as StartBBBMessage
                     );
                 }
 

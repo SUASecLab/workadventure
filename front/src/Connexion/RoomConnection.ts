@@ -26,7 +26,9 @@ import {
     TeleportMessageMessage,
     QueryCowebsiteAuthenticationJwtMessage,
     QueryJitsiJwtMessage,
+    SendBBBMeetingUrlMessage,
     SendCowebsiteAuthenticationJwtMessage,
+    StartBBBMessage,
     SendJitsiJwtMessage,
     CharacterLayerMessage,
     PingMessage,
@@ -259,6 +261,8 @@ export class RoomConnection implements RoomConnection {
                 //todo: implement a way to notify the user the room was refreshed.
             } else if (message.hasSendcowebsiteauthenticationjwtmessage()) {
                 this.dispatch(EventMessage.AUTHENTICATED_COWEBSITE, message.getSendcowebsiteauthenticationjwtmessage());
+            } else if (message.hasSendbbbmeetingurlmessage()) {
+                this.dispatch(EventMessage.START_BBB_MEETING, message.getSendbbbmeetingurlmessage());
             } else {
                 throw new Error("Unknown message received");
             }
@@ -695,6 +699,25 @@ export class RoomConnection implements RoomConnection {
         this.onMessage(EventMessage.AUTHENTICATED_COWEBSITE, (message: SendCowebsiteAuthenticationJwtMessage) => {
             callback(message.getToken(), message.getUrl(), message.getBase(), message.getAllowapi(), message.getAllowpolicy(), message.getWebsiteratio());
         });
+    }
+
+    public onStartBBBMeeting(callback: (url: string) => void): void {
+        this.onMessage(EventMessage.START_BBB_MEETING, (message: SendBBBMeetingUrlMessage) => {
+            callback(message.getUrl());
+        });
+    }
+
+    public emitStartBBBMessage(name: string, meetingName: string | undefined) {
+        const startBBBMessage = new StartBBBMessage();
+        startBBBMessage.setName(name);
+        if (meetingName !== undefined) {
+            startBBBMessage.setMeetingname(meetingName);
+        }
+
+        const clientToServerMessage = new ClientToServerMessage();
+        clientToServerMessage.setStartbbbmessage(startBBBMessage);
+
+        this.socket.send(clientToServerMessage.serializeBinary().buffer);
     }
 
     public onSetVariable(callback: (name: string, value: unknown) => void): void {
