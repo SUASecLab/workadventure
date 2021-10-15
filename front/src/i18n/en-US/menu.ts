@@ -119,6 +119,7 @@ const menu: BaseTranslation = {
         credit: "Credit",
         globalMessages: "Global Messages",
         contact: "Contact",
+        tips: "Tips",
     },
 };
 

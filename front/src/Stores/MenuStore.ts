@@ -35,6 +35,7 @@ export const warningContainerStore = createWarningContainerStore();
 export enum SubMenusInterface {
     settings = "settings",
     profile = "profile",
+    tips = "tips",
     invite = "invite",
     aboutRoom = "credit",
     globalMessages = "globalMessages",
@@ -63,6 +64,10 @@ function createSubMenusStore() {
         {
             type: "translated",
             key: SubMenusInterface.profile,
+        },
+        {
+            type: "translated",
+            key: SubMenusInterface.tips,
         },
         {
             type: "translated",

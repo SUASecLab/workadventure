@@ -120,6 +120,7 @@ const menu: NonNullable<Translation["menu"]> = {
         credit: "Über die Karte",
         globalMessages: "Globale Nachrichten",
         contact: "Kontakt",
+        tips: "Tipps",
     },
 };
 
