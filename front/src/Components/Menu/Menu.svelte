@@ -2,15 +2,18 @@
     import {fly} from "svelte/transition";
     import SettingsSubMenu from "./SettingsSubMenu.svelte";
     import ProfileSubMenu from "./ProfileSubMenu.svelte";
-    import CreateMapSubMenu from "./CreateMapSubMenu.svelte";
     import AboutRoomSubMenu from "./AboutRoomSubMenu.svelte";
     import GlobalMessageSubMenu from "./GlobalMessagesSubMenu.svelte";
     import ContactSubMenu from "./ContactSubMenu.svelte";
-    import CustomSubMenu from "./CustomSubMenu.svelte"
+    import CustomSubMenu from "./CustomSubMenu.svelte";
+    import { FAQScene, FAQSceneName } from "../../Phaser/Login/FAQScene";
+    import {gameManager} from "../../Phaser/Game/GameManager";
+    import {faqSceneVisibleStore} from "../../Stores/FAQSceneStore";
     import {
         checkSubMenuToShow,
         customMenuIframe,
         menuVisiblilityStore,
+        menuIconVisiblilityStore,
         SubMenusInterface,
         subMenusStore
     } from "../../Stores/MenuStore";
@@ -52,8 +55,11 @@
                 case SubMenusInterface.profile:
                     activeComponent = ProfileSubMenu;
                     break;
-                case SubMenusInterface.createMap:
-                    activeComponent = CreateMapSubMenu;
+                case SubMenusInterface.showTips:
+                    menuVisiblilityStore.set(false);
+                    menuIconVisiblilityStore.set(false);
+                    faqSceneVisibleStore.set(true);
+                    gameManager.leaveGame(FAQSceneName,new FAQScene());
                     break;
                 case SubMenusInterface.aboutRoom:
                     activeComponent = AboutRoomSubMenu;

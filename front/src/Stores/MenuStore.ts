@@ -34,7 +34,7 @@ export const warningContainerStore = createWarningContainerStore();
 export enum SubMenusInterface {
     settings = "Settings",
     profile = "Profile",
-    createMap = "Create a Map",
+    showTips = "Show Tips",
     aboutRoom = "About the Room",
     globalMessages = "Global Messages",
     contact = "Contact",
@@ -44,7 +44,7 @@ function createSubMenusStore() {
     const { subscribe, update } = writable<string[]>([
         SubMenusInterface.settings,
         SubMenusInterface.profile,
-        SubMenusInterface.createMap,
+        SubMenusInterface.showTips,
         SubMenusInterface.aboutRoom,
         SubMenusInterface.globalMessages,
         SubMenusInterface.contact,
