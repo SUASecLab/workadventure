@@ -39,6 +39,7 @@ class CoWebsiteManager {
     private cowebsiteMainDom: HTMLDivElement;
     private cowebsiteAsideDom: HTMLDivElement;
     private previousTouchMoveCoordinates: TouchMoveCoordinates | null = null; //only use on touchscreens to track touch movement
+    private oldRatio: number = 50;
 
     get width(): number {
         return this.cowebsiteDiv.clientWidth;
@@ -198,6 +199,7 @@ class CoWebsiteManager {
                 this.open();
                 if (widthPercent) {
                     this.widthPercent = widthPercent;
+                    this.oldRatio = widthPercent;
                 }
                 setTimeout(() => {
                     this.fire();
@@ -221,6 +223,7 @@ class CoWebsiteManager {
                 this.open();
                 if (widthPercent) {
                     this.widthPercent = widthPercent;
+                    this.oldRatio = widthPercent;
                 }
                 setTimeout(() => {
                     this.fire();
@@ -289,6 +292,22 @@ class CoWebsiteManager {
             //we don't trigger a resize of the phaser game since it won't be visible anyway.
             HtmlUtils.getElementByIdOrFail(cowebsiteOpenFullScreenImageId).style.display = "none";
             HtmlUtils.getElementByIdOrFail(cowebsiteCloseFullScreenImageId).style.display = "inline";
+        }
+    }
+
+    public saveRatio(): void {
+        if (this.verticalMode) {
+            this.oldRatio = this.height / window.innerHeight;
+        } else {
+            this.oldRatio = this.width / window.innerWidth;
+        }
+    }
+
+    public restoreRatio(): void {
+        if (this.verticalMode) {
+            this.height = window.innerHeight * this.oldRatio;
+        } else {
+            this.width = window.innerWidth * this.oldRatio;
         }
     }
 }

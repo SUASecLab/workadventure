@@ -144,11 +144,13 @@ waScaleManager.setGame(game);
 
 window.addEventListener("resize", function (event) {
     coWebsiteManager.resetStyle();
+    coWebsiteManager.restoreRatio();
 
     waScaleManager.applyNewSize();
 });
 
 coWebsiteManager.onResize.subscribe(() => {
+    coWebsiteManager.saveRatio();
     waScaleManager.applyNewSize();
 });
 
