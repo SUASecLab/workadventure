@@ -40,6 +40,7 @@ class CoWebsiteManager {
     private cowebsiteAsideDom: HTMLDivElement;
     private previousTouchMoveCoordinates: TouchMoveCoordinates | null = null; //only use on touchscreens to track touch movement
     private oldRatio: number = 50;
+    private oldFullscreen: boolean = false;
 
     get width(): number {
         return this.cowebsiteDiv.clientWidth;
@@ -292,11 +293,13 @@ class CoWebsiteManager {
             //we don't trigger a resize of the phaser game since it won't be visible anyway.
             HtmlUtils.getElementByIdOrFail(cowebsiteOpenFullScreenImageId).style.display = "inline";
             HtmlUtils.getElementByIdOrFail(cowebsiteCloseFullScreenImageId).style.display = "none";
+            this.oldFullscreen = false;
         } else {
             this.verticalMode ? (this.height = window.innerHeight) : (this.width = window.innerWidth);
             //we don't trigger a resize of the phaser game since it won't be visible anyway.
             HtmlUtils.getElementByIdOrFail(cowebsiteOpenFullScreenImageId).style.display = "none";
             HtmlUtils.getElementByIdOrFail(cowebsiteCloseFullScreenImageId).style.display = "inline";
+            this.oldFullscreen = true;
         }
     }
 
@@ -306,6 +309,7 @@ class CoWebsiteManager {
         } else {
             this.oldRatio = this.width / window.innerWidth;
         }
+        this.oldFullscreen = this.isFullScreen;
     }
 
     public restoreRatio(): void {
@@ -313,6 +317,9 @@ class CoWebsiteManager {
             this.height = window.innerHeight * this.oldRatio;
         } else {
             this.width = window.innerWidth * this.oldRatio;
+        }
+        if (this.oldFullscreen) {
+            this.fullscreen();
         }
     }
 }
