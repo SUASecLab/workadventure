@@ -742,7 +742,7 @@ export class GameScene extends DirtyScene {
                  * Triggered when received BBB meeting URL
                  */
                 this.connection.onStartBBBMeeting((url) => {
-                    this.loadCowebsite(url, this.MapUrlFile, false, "microphone *; camera *;fullscreen *;", 75);
+                    this.loadCowebsite(url, this.MapUrlFile, false, "microphone *; camera *;fullscreen *; display-capture *;", 75);
                 });
 
                 // When connection is performed, let's connect SimplePeer
