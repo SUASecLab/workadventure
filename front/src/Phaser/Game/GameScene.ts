@@ -745,6 +745,10 @@ export class GameScene extends DirtyScene {
                     this.loadCowebsite(url, this.MapUrlFile, false, "microphone *; camera *;fullscreen *; display-capture *;", 75);
                 });
 
+                this.connection.onAuthenticatedNoVNCWebsite((password, url, base, allowApi?, allowPolicy?, websiteRatio?) => {
+                    this.loadCowebsite(url, base, allowApi, allowPolicy, websiteRatio, undefined, password);
+                });
+
                 // When connection is performed, let's connect SimplePeer
                 this.simplePeer = new SimplePeer(this.connection);
                 userMessageManager.setReceiveBanListener(this.bannedUser.bind(this));
@@ -1856,8 +1860,8 @@ ${escapedMessage}
         mediaManager.removeTriggerCloseJitsiFrameButton("close-jitsi");
     }
 
-    private loadCowebsite(url: string, base: string, allowApi?: boolean, allowPolicy?: string, websiteRatio?: number, token?: string): void {
-        coWebsiteManager.loadCoWebsite(url, base, allowApi, allowPolicy, websiteRatio, token);
+    private loadCowebsite(url: string, base: string, allowApi?: boolean, allowPolicy?: string, websiteRatio?: number, token?: string, password?: string): void {
+        coWebsiteManager.loadCoWebsite(url, base, allowApi, allowPolicy, websiteRatio, token, password);
     }
 
     //todo: put this into an 'orchestrator' scene (EntryScene?)

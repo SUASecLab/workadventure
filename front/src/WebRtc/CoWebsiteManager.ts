@@ -174,7 +174,8 @@ class CoWebsiteManager {
         allowApi?: boolean,
         allowPolicy?: string,
         widthPercent?: number,
-        token?: string
+        token?: string,
+        password?: string
     ): void {
         this.load();
         this.cowebsiteMainDom.innerHTML = ``;
@@ -184,6 +185,9 @@ class CoWebsiteManager {
         const iframeUrl = new URL(url, base);
         if (token) {
             iframeUrl.searchParams.set('token', token);
+        }
+        if (password) {
+             iframeUrl.searchParams.set('password', password);
         }
         iframe.src = iframeUrl.toString();
         if (allowPolicy) {

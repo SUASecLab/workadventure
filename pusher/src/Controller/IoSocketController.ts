@@ -14,6 +14,7 @@ import {
     ReportPlayerMessage,
     QueryJitsiJwtMessage,
     QueryCowebsiteAuthenticationJwtMessage,
+    QueryCowebsiteNoVNCAuthenticationMessage,
     SendUserMessage,
     ServerToClientMessage,
     StartBBBMessage,
@@ -399,6 +400,11 @@ export class IoSocketController {
                     socketManager.handleStartBBBMessage(
                         client,
                         message.getStartbbbmessage() as StartBBBMessage
+                    );
+                } else if (message.hasQuerycowebsitenovncauthenticationmessage()) {
+                    socketManager.handleQueryCowebsiteNoVNCAuthenticationMessage(
+                    client,
+                    message.getQuerycowebsitenovncauthenticationmessage() as QueryCowebsiteNoVNCAuthenticationMessage
                     );
                 }
 

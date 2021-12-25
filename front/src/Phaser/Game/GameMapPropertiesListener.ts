@@ -46,9 +46,18 @@ export class GameMapPropertiesListener {
             } else {
                 const openWebsiteFunction = () => {
                     const authenticate = allProps.get("authenticate") as boolean | undefined;
+                    const authenticateNoVNC = allProps.get("authenticateNoVNC") as boolean | undefined;
                     if (authenticate) {
                         this.connection?.emitQueryCowebsiteAuthenticationJwtMessage(
                             this.playerName,
+                            newValue as string,
+                            this.scene.MapUrlFile,
+                            allProps.get("openWebsiteAllowApi") as boolean | undefined,
+                            allProps.get("openWebsitePolicy") as string | undefined,
+                            allProps.get("openWebsiteWidth") as number | undefined
+                        );
+                    } else if (authenticateNoVNC) {
+                        this.connection?.emitQueryCowebsiteNoVNCAuthenticationMessage(
                             newValue as string,
                             this.scene.MapUrlFile,
                             allProps.get("openWebsiteAllowApi") as boolean | undefined,

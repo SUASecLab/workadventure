@@ -26,8 +26,10 @@ import {
     TeleportMessageMessage,
     QueryCowebsiteAuthenticationJwtMessage,
     QueryJitsiJwtMessage,
+    QueryCowebsiteNoVNCAuthenticationMessage,
     SendBBBMeetingUrlMessage,
     SendCowebsiteAuthenticationJwtMessage,
+    SendNoVNCAuthenticationMessage,
     StartBBBMessage,
     SendJitsiJwtMessage,
     CharacterLayerMessage,
@@ -263,6 +265,8 @@ export class RoomConnection implements RoomConnection {
                 this.dispatch(EventMessage.AUTHENTICATED_COWEBSITE, message.getSendcowebsiteauthenticationjwtmessage());
             } else if (message.hasSendbbbmeetingurlmessage()) {
                 this.dispatch(EventMessage.START_BBB_MEETING, message.getSendbbbmeetingurlmessage());
+            } else if (message.hasSendnovncauthenticationmessage()) {
+                this.dispatch(EventMessage.AUTHENTICATE_NOVNC, message.getSendnovncauthenticationmessage());
             } else {
                 throw new Error("Unknown message received");
             }
@@ -718,6 +722,33 @@ export class RoomConnection implements RoomConnection {
         clientToServerMessage.setStartbbbmessage(startBBBMessage);
 
         this.socket.send(clientToServerMessage.serializeBinary().buffer);
+    }
+
+	public emitQueryCowebsiteNoVNCAuthenticationMessage(url: string, base: string, allowApi?: boolean, allowPolicy?: string, websiteRatio?: number): void {
+		const queryCowebsiteNoVNCAuthenticationMessage = new QueryCowebsiteNoVNCAuthenticationMessage();
+		queryCowebsiteNoVNCAuthenticationMessage.setUrl(url);
+		queryCowebsiteNoVNCAuthenticationMessage.setBase(base);
+		if (allowApi) {
+			queryCowebsiteNoVNCAuthenticationMessage.setAllowapi(allowApi);
+		}
+		if (allowPolicy) {
+			queryCowebsiteNoVNCAuthenticationMessage.setAllowpolicy(allowPolicy);
+		}
+		if (websiteRatio) {
+			queryCowebsiteNoVNCAuthenticationMessage.setWebsiteratio(websiteRatio);
+		}
+
+		const clientToServerMessage = new ClientToServerMessage();
+
+	clientToServerMessage.setQuerycowebsitenovncauthenticationmessage(queryCowebsiteNoVNCAuthenticationMessage);
+
+		this.socket.send(clientToServerMessage.serializeBinary().buffer);
+	}
+
+    public onAuthenticatedNoVNCWebsite(callback: (password: string, url: string, base: string, allowApi?: boolean, allowPolicy?: string, websiteRatio?: number) => void): void {
+        this.onMessage(EventMessage.AUTHENTICATE_NOVNC, (message: SendNoVNCAuthenticationMessage) => {
+            callback(message.getPassword(), message.getUrl(), message.getBase(), message.getAllowapi(), message.getAllowpolicy(), message.getWebsiteratio());
+        });
     }
 
     public onSetVariable(callback: (name: string, value: unknown) => void): void {

@@ -15,12 +15,14 @@ import {
     PusherToBackMessage,
     QueryCowebsiteAuthenticationJwtMessage,
     QueryJitsiJwtMessage,
+    QueryCowebsiteNoVNCAuthenticationMessage,
     RefreshRoomMessage,
     ReportPlayerMessage,
     RoomJoinedMessage,
     SendBBBMeetingUrlMessage,
     SendCowebsiteAuthenticationJwtMessage,
     SendJitsiJwtMessage,
+    SendNoVNCAuthenticationMessage,
     ServerToAdminClientMessage,
     ServerToClientMessage,
     SetPlayerDetailsMessage,
@@ -51,6 +53,7 @@ import {
     BBB_SECRET,
     BBB_ATTENDEE_SECRET,
     BBB_MODERATOR_SECRET,
+    NOVNC_PASSWORD,
 } from "../Enum/EnvironmentVariable";
 import { adminApi } from "./AdminApi";
 import { emitInBatch } from "./IoSocketHelpers";
@@ -722,6 +725,29 @@ export class SocketManager implements ZoneEventListener {
         } catch (e) {
             console.error("An error occured while generating the BBB meeting link: ", e);
         }
+    }
+
+    public handleQueryCowebsiteNoVNCAuthenticationMessage(client: ExSocketInterface,
+        message: QueryCowebsiteNoVNCAuthenticationMessage) {
+        const sendNoVNCAuthenticationMessage = new SendNoVNCAuthenticationMessage();
+        sendNoVNCAuthenticationMessage.setPassword(NOVNC_PASSWORD);
+        sendNoVNCAuthenticationMessage.setUrl(message.getUrl());
+        sendNoVNCAuthenticationMessage.setBase(message.getBase());
+        if (message.getAllowapi()) {
+            sendNoVNCAuthenticationMessage.setAllowapi(message.getAllowapi());
+        }
+        if (message.getAllowpolicy()) {
+            sendNoVNCAuthenticationMessage.setAllowpolicy(message.getAllowpolicy());
+        }
+        if (message.getWebsiteratio()) {
+            sendNoVNCAuthenticationMessage.setWebsiteratio(message.getWebsiteratio());
+        }
+
+        const serverToClientMessage = new ServerToClientMessage();
+
+        serverToClientMessage.setSendnovncauthenticationmessage(sendNoVNCAuthenticationMessage);
+
+        client.send(serverToClientMessage.serializeBinary().buffer, true);
     }
 
     public async emitPlayGlobalMessage(

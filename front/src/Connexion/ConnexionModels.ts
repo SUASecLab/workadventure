@@ -34,6 +34,7 @@ export enum EventMessage {
     SET_VARIABLE = "set-variable",
     AUTHENTICATED_COWEBSITE = "authenticated-cowebsite",
     START_BBB_MEETING = "start-bbb-meeting",
+    AUTHENTICATE_NOVNC = "authenticate-novnc",
 }
 
 export interface PointInterface {
