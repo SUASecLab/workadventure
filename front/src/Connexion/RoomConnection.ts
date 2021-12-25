@@ -44,6 +44,7 @@ import {
     PlayGlobalMessage as PlayGlobalMessageTsProto,
     StopGlobalMessage as StopGlobalMessageTsProto,
     SendCowebsiteAuthenticationJwtMessage as SendCowebsiteAuthenticationJwtMessageProto,
+    SendNoVNCAuthenticationMessage as SendNoVNCAuthenticationMessageProto,
     SendJitsiJwtMessage as SendJitsiJwtMessageTsProto,
     SendUserMessage as SendUserMessageTsProto,
     BanUserMessage as BanUserMessageTsProto,
@@ -104,6 +105,9 @@ export class RoomConnection implements RoomConnection {
 
     private readonly _sendCowebsiteAuthenticationJwtMessageStream = new Subject<SendCowebsiteAuthenticationJwtMessageProto>();
     public readonly sendCowebsiteAuthenticationJwtMessageStream = this._sendCowebsiteAuthenticationJwtMessageStream.asObservable();
+
+    private readonly _sendNoVNCAuthenticationMessageStream = new Subject<SendNoVNCAuthenticationMessageProto>();
+    public readonly sendNoVNCAuthenticationMessageStream = this._sendNoVNCAuthenticationMessageStream.asObservable();
 
     private readonly _worldFullMessageStream = new Subject<string | null>();
     public readonly worldFullMessageStream = this._worldFullMessageStream.asObservable();
@@ -485,6 +489,10 @@ export class RoomConnection implements RoomConnection {
                     this._sendCowebsiteAuthenticationJwtMessageStream.next(message.sendCowebsiteAuthenticationJwtMessage);
                     break;
                 }
+                case "sendNoVNCAuthenticationMessage": {
+                    this._sendNoVNCAuthenticationMessageStream.next(message.sendNoVNCAuthenticationMessage);
+                    break;
+                }
                 case "errorMessage": {
                     this._errorMessageStream.next(message.errorMessage);
                     console.error("An error occurred server side: " + message.errorMessage.message);
@@ -829,6 +837,23 @@ export class RoomConnection implements RoomConnection {
                 queryCowebsiteAuthenticationJwtMessage: {
                     url,
                     name,
+                    allowApi: allowApi,
+                    allowPolicy: allowPolicy,
+                    widthPercent: widthPercent,
+                    closable: closable
+                },
+            },
+        }).finish();
+
+        this.socket.send(bytes);
+    }
+
+    public emitQueryCowebsiteNoVNCAuthenticationMessage(url: string, name: string, allowApi: boolean, allowPolicy: string, widthPercent: number, closable: boolean): void {
+        const bytes = ClientToServerMessageTsProto.encode({
+            message: {
+                $case: "queryCowebsiteNoVNCAuthenticationMessage",
+                queryCowebsiteNoVNCAuthenticationMessage: {
+                    url,
                     allowApi: allowApi,
                     allowPolicy: allowPolicy,
                     widthPercent: widthPercent,

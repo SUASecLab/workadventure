@@ -11,6 +11,7 @@ const JITSI_ISS = process.env.JITSI_ISS || "";
 const SECRET_JITSI_KEY = process.env.SECRET_JITSI_KEY || "";
 const SECRET_WEBSITE_ISS = process.env.SECRET_WEBSITE_ISS || "";
 const SECRET_WEBSITE_KEY = process.env.SECRET_WEBSITE_KEY || "";
+const NOVNC_PASSWORD = process.env.NOVNC_PASSWORD || "";
 const PUSHER_HTTP_PORT = parseInt(process.env.PUSHER_HTTP_PORT || "8080") || 8080;
 export const SOCKET_IDLE_TIMER = parseInt(process.env.SOCKET_IDLE_TIMER as string) || 120; // maximum time (in second) without activity before a socket is closed. Should be greater than 60 seconds in order to cope for Chrome intensive throttling (https://developer.chrome.com/blog/timer-throttling-in-chrome-88/#intensive-throttling)
 
@@ -41,5 +42,6 @@ export {
     SECRET_JITSI_KEY,
     SECRET_WEBSITE_ISS,
     SECRET_WEBSITE_KEY,
+    NOVNC_PASSWORD,
     PUSHER_HTTP_PORT,
 };

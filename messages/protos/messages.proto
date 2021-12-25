@@ -94,6 +94,14 @@ message QueryCowebsiteAuthenticationJwtMessage {
   bool closable = 6;
 }
 
+message QueryCowebsiteNoVNCAuthenticationMessage {
+  string url = 1;
+  bool allowApi = 2;
+  string allowPolicy = 3;
+  int32 widthPercent = 4;
+  bool closable = 5;
+}
+
 message FollowRequestMessage {
   int32 leader = 1;
 }
@@ -127,6 +135,7 @@ message ClientToServerMessage {
     FollowConfirmationMessage followConfirmationMessage = 16;
     FollowAbortMessage followAbortMessage = 17;
     QueryCowebsiteAuthenticationJwtMessage queryCowebsiteAuthenticationJwtMessage = 18;
+    QueryCowebsiteNoVNCAuthenticationMessage queryCowebsiteNoVNCAuthenticationMessage = 19;
   }
 }
 
@@ -279,6 +288,15 @@ message SendCowebsiteAuthenticationJwtMessage {
   bool closable = 6;
 }
 
+message SendNoVNCAuthenticationMessage {
+  string url = 1;
+  string password = 2;
+  bool allowApi = 3;
+  string allowPolicy = 4;
+  int32 widthPercent = 5;
+  bool closable = 6;
+}
+
 message WorldFullWarningMessage{
 }
 message WorldFullWarningToRoomMessage{
@@ -336,6 +354,7 @@ message ServerToClientMessage {
     FollowAbortMessage followAbortMessage = 23;
     InvalidTextureMessage invalidTextureMessage = 24;
     SendCowebsiteAuthenticationJwtMessage sendCowebsiteAuthenticationJwtMessage = 25;
+    SendNoVNCAuthenticationMessage sendNoVNCAuthenticationMessage = 26;
   }
 }
 
@@ -424,6 +443,7 @@ message PusherToBackMessage {
     FollowConfirmationMessage followConfirmationMessage = 17;
     FollowAbortMessage followAbortMessage = 18;
     QueryCowebsiteAuthenticationJwtMessage queryCowebsiteAuthenticationJwtMessage = 19;
+    QueryCowebsiteNoVNCAuthenticationMessage queryCowebsiteNoVNCAuthenticationMessage = 20;
   }
 }
 

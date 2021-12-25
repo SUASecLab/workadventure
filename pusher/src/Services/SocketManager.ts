@@ -18,11 +18,13 @@ import {
     PusherToBackMessage,
     QueryCowebsiteAuthenticationJwtMessage,
     QueryJitsiJwtMessage,
+    QueryCowebsiteNoVNCAuthenticationMessage,
     RefreshRoomMessage,
     ReportPlayerMessage,
     RoomJoinedMessage,
     SendCowebsiteAuthenticationJwtMessage,
     SendJitsiJwtMessage,
+    SendNoVNCAuthenticationMessage,
     ServerToAdminClientMessage,
     ServerToClientMessage,
     SetPlayerDetailsMessage,
@@ -43,7 +45,7 @@ import {
     InvalidTextureMessage,
 } from "../Messages/generated/messages_pb";
 import { ProtobufUtils } from "../Model/Websocket/ProtobufUtils";
-import { ADMIN_API_URL, JITSI_ISS, JITSI_URL, SECRET_JITSI_KEY, SECRET_WEBSITE_ISS, SECRET_WEBSITE_KEY } from "../Enum/EnvironmentVariable";
+import { ADMIN_API_URL, JITSI_ISS, JITSI_URL, NOVNC_PASSWORD, SECRET_JITSI_KEY, SECRET_WEBSITE_ISS, SECRET_WEBSITE_KEY } from "../Enum/EnvironmentVariable";
 import { adminApi } from "./AdminApi";
 import { emitInBatch } from "./IoSocketHelpers";
 import Jwt from "jsonwebtoken";
@@ -687,7 +689,7 @@ export class SocketManager implements ZoneEventListener {
             sendCowebsiteAuthenticationJwtMessage.setAllowapi(message.getAllowapi());
             sendCowebsiteAuthenticationJwtMessage.setAllowpolicy(message.getAllowpolicy());
             sendCowebsiteAuthenticationJwtMessage.setWidthpercent(message.getWidthpercent());
-            sendCowebsiteAuthenticationJwtMessage.setClosable(message.getClosable())
+            sendCowebsiteAuthenticationJwtMessage.setClosable(message.getClosable());
             const serverToClientMessage = new ServerToClientMessage();
             serverToClientMessage.setSendcowebsiteauthenticationjwtmessage(sendCowebsiteAuthenticationJwtMessage);
 
@@ -695,6 +697,22 @@ export class SocketManager implements ZoneEventListener {
         } catch (e) {
             console.error("An error occurred while generating the Jitsi JWT token: ", e);
         }
+    }
+
+    public handleQueryCowebsiteNoVNCAuthenticationMessage(client: ExSocketInterface,
+        message: QueryCowebsiteNoVNCAuthenticationMessage) {
+        const sendNoVNCAuthenticationMessage = new SendNoVNCAuthenticationMessage();
+        sendNoVNCAuthenticationMessage.setPassword(NOVNC_PASSWORD);
+        sendNoVNCAuthenticationMessage.setUrl(message.getUrl());
+        sendNoVNCAuthenticationMessage.setUrl(message.getUrl());
+        sendNoVNCAuthenticationMessage.setAllowapi(message.getAllowapi());
+        sendNoVNCAuthenticationMessage.setAllowpolicy(message.getAllowpolicy());
+        sendNoVNCAuthenticationMessage.setWidthpercent(message.getWidthpercent());
+        sendNoVNCAuthenticationMessage.setClosable(message.getClosable());
+        const serverToClientMessage = new ServerToClientMessage();
+        serverToClientMessage.setSendnovncauthenticationmessage(sendNoVNCAuthenticationMessage);
+
+        client.send(serverToClientMessage.serializeBinary().buffer, true);
     }
 
     public async emitPlayGlobalMessage(

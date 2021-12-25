@@ -3,6 +3,7 @@ export enum GameMapProperties {
     AUDIO_LOOP = "audioLoop",
     AUDIO_VOLUME = "audioVolume",
     AUTHENTICATE = "authenticate",
+    AUTHENTICATE_NOVNC = "authenticateNoVNC",
     COLLIDES = "collides",
     DEFAULT = "default",
     EXIT_URL = "exitUrl",

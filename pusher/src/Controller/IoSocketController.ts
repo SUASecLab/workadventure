@@ -14,6 +14,7 @@ import {
     ReportPlayerMessage,
     QueryJitsiJwtMessage,
     QueryCowebsiteAuthenticationJwtMessage,
+    QueryCowebsiteNoVNCAuthenticationMessage,
     SendUserMessage,
     ServerToClientMessage,
     CompanionMessage,
@@ -566,6 +567,11 @@ export class IoSocketController {
                     socketManager.handleQueryCowebsiteAuthenticationJwtMessage(
                         client,
                         message.getQuerycowebsiteauthenticationjwtmessage() as QueryCowebsiteAuthenticationJwtMessage
+                    );
+                } else if (message.hasQuerycowebsitenovncauthenticationmessage()) {
+                    socketManager.handleQueryCowebsiteNoVNCAuthenticationMessage(
+                        client,
+                        message.getQuerycowebsitenovncauthenticationmessage() as QueryCowebsiteNoVNCAuthenticationMessage
                     );
                 }
 

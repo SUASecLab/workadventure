@@ -96,7 +96,8 @@ import { StringUtils } from "../../Utils/StringUtils";
 import { startLayerNamesStore } from "../../Stores/StartLayerNamesStore";
 import { JitsiCoWebsite } from "../../WebRtc/CoWebsite/JitsiCoWebsite";
 import { SimpleCoWebsite } from "../../WebRtc/CoWebsite/SimpleCoWebsite";
-import { AuthenticatedCoWebsite} from "../../WebRtc/CoWebsite/AuthenticatedCoWebsite"
+import { AuthenticatedCoWebsite } from "../../WebRtc/CoWebsite/AuthenticatedCoWebsite";
+import { NoVNCCoWebsite } from "../../WebRtc/CoWebsite/NoVNCCoWebsite";
 import type { CoWebsite } from "../../WebRtc/CoWebsite/CoWesbite";
 import type { VideoPeer } from "../../WebRtc/VideoPeer";
 import CancelablePromise from "cancelable-promise";
@@ -868,6 +869,17 @@ export class GameScene extends DirtyScene {
                  */
                 this.connection.sendCowebsiteAuthenticationJwtMessageStream.subscribe((message) => {
                     const coWebsite = new AuthenticatedCoWebsite(new URL(message.url), message.token, message.allowApi, message.allowPolicy, message.widthPercent, message.closable);
+                    coWebsiteManager.addCoWebsiteToStore(coWebsite, 0);
+                    coWebsiteManager.loadCoWebsite(coWebsite).catch((err) => {
+                        console.error(err);
+                    });
+                });
+
+                /**
+                 * Triggered when received password for NoVNC cowebsite
+                 */
+                this.connection.sendNoVNCAuthenticationMessageStream.subscribe((message) => {
+                    const coWebsite = new NoVNCCoWebsite(new URL(message.url), message.password, message.allowApi, message.allowPolicy, message.widthPercent, message.closable);
                     coWebsiteManager.addCoWebsiteToStore(coWebsite, 0);
                     coWebsiteManager.loadCoWebsite(coWebsite).catch((err) => {
                         console.error(err);
@@ -2153,10 +2165,6 @@ ${escapedMessage}
 
         analyticsClient.enteredJitsi(roomName, this.room.id);
     }
-
-    // private loadCowebsite(url: string, base: string, allowApi?: boolean, allowPolicy?: string, websiteRatio?: number, token?: string): void {
-    //     coWebsiteManager.loadCoWebsite(url, base, allowApi, allowPolicy, websiteRatio, token);
-    // }
 
     //todo: put this into an 'orchestrator' scene (EntryScene?)
     private bannedUser() {

@@ -18,6 +18,7 @@ import { audioManagerFileStore, audioManagerVisibilityStore } from "../../Stores
 import { iframeListener } from "../../Api/IframeListener";
 import { Room } from "../../Connexion/Room";
 import LL from "../../i18n/i18n-svelte";
+import { NoVNCCoWebsite } from "../../WebRtc/CoWebsite/NoVNCCoWebsite";
 
 interface OpenCoWebsite {
     actionId: string;
@@ -189,6 +190,7 @@ export class GameMapPropertiesListener {
                     }
 
                     let authenticationProperty: boolean | undefined;
+                    let authenticateNoVNCProperty: boolean | undefined;
                     let openWebsiteProperty: string | undefined;
                     let allowApiProperty: boolean | undefined;
                     let websitePolicyProperty: string | undefined;
@@ -222,6 +224,10 @@ export class GameMapPropertiesListener {
                                 break;
                             case GameMapProperties.AUTHENTICATE:
                                 authenticationProperty = property.value as boolean | undefined;
+                                break
+                            case GameMapProperties.AUTHENTICATE_NOVNC:
+                                authenticateNoVNCProperty =  property.value as boolean | undefined;
+                                break;
                         }
                     });
 
@@ -254,7 +260,10 @@ export class GameMapPropertiesListener {
                             this.scene.connection?.emitQueryCowebsiteAuthenticationJwtMessage(openWebsiteProperty ?? "", this.playerName, allowApiProperty ?? false, websitePolicyProperty ?? "", websiteWidthProperty ?? 100, false);
 
                             layoutManagerActionStore.removeAction(actionId);
-                            return;
+                        } else if (authenticateNoVNCProperty) {
+                            this.scene.connection?.emitQueryCowebsiteNoVNCAuthenticationMessage(openWebsiteProperty ?? "", this.playerName, allowApiProperty ?? false, websitePolicyProperty ?? "", websiteWidthProperty ?? 100, false);
+
+                            layoutManagerActionStore.removeAction(actionId);
                         } else {
                             const coWebsite = new SimpleCoWebsite(
                                 new URL(openWebsiteProperty ?? "", this.scene.MapUrlFile),
@@ -316,7 +325,8 @@ export class GameMapPropertiesListener {
         this.gameMap.onLeaveLayer((oldLayers) => {
             const handler = () => {
                 coWebsiteManager.getCoWebsites().forEach((coWebsite) => {
-                    if (coWebsite instanceof AuthenticatedCoWebsite) {
+                    if (coWebsite instanceof AuthenticatedCoWebsite
+                        || coWebsite instanceof NoVNCCoWebsite) {
                         coWebsiteManager.closeCoWebsite(coWebsite);
                     }
                 });
