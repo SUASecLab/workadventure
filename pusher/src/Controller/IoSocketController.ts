@@ -39,7 +39,9 @@ export class IoSocketController {
 
     constructor(private readonly app: TemplatedApp) {
         this.ioConnection();
-        this.adminRoomSocket();
+        if (ADMIN_SOCKETS_TOKEN) {
+            this.adminRoomSocket();
+        }
     }
 
     adminRoomSocket() {

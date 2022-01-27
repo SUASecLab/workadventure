@@ -96,6 +96,9 @@ class AdminApi {
         reporterUserUuid: string,
         reportWorldSlug: string
     ) {
+        if (!ADMIN_API_URL) {
+            return Promise.reject(new Error("No admin backoffice set!"));
+        }
         return Axios.post(
             `${ADMIN_API_URL}/api/report`,
             {

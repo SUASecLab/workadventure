@@ -14,6 +14,10 @@ export class DebugController {
         this.App.get("/dump", (res: HttpResponse, req: HttpRequest) => {
             const query = parse(req.getQuery());
 
+            if (ADMIN_API_TOKEN === "") {
+                return res.writeStatus("401 Unauthorized").end("No token configured!");
+            }
+
             if (query.token !== ADMIN_API_TOKEN) {
                 return res.writeStatus("401 Unauthorized").end("Invalid token sent!");
             }
