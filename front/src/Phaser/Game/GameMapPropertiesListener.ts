@@ -189,7 +189,7 @@ export class GameMapPropertiesListener {
                         return;
                     }
 
-                    let authenticationProperty: boolean | undefined;
+                    let authenticateProperty: boolean | undefined;
                     let authenticateNoVNCProperty: boolean | undefined;
                     let openWebsiteProperty: string | undefined;
                     let allowApiProperty: boolean | undefined;
@@ -223,7 +223,7 @@ export class GameMapPropertiesListener {
                                 websiteTriggerMessageProperty = property.value as string | undefined;
                                 break;
                             case GameMapProperties.AUTHENTICATE:
-                                authenticationProperty = property.value as boolean | undefined;
+                                authenticateProperty = property.value as boolean | undefined;
                                 break
                             case GameMapProperties.AUTHENTICATE_NOVNC:
                                 authenticateNoVNCProperty =  property.value as boolean | undefined;
@@ -256,11 +256,13 @@ export class GameMapPropertiesListener {
                     };
 
                     const openCoWebsiteFunction = () => {
-                        if (authenticationProperty) {
+                        if (authenticateProperty) {
+                            // TODO Remove hard-coded values -> use optionals; will get possible in future WA-Version with https://github.com/thecodingmachine/workadventure/pull/2005
                             this.scene.connection?.emitQueryCowebsiteAuthenticationJwtMessage(openWebsiteProperty ?? "", this.playerName, allowApiProperty ?? false, websitePolicyProperty ?? "", websiteWidthProperty ?? 100, false);
 
                             layoutManagerActionStore.removeAction(actionId);
                         } else if (authenticateNoVNCProperty) {
+                            // TODO Remove hard-coded values -> use optionals; will get possible in future WA-Version with https://github.com/thecodingmachine/workadventure/pull/2005
                             this.scene.connection?.emitQueryCowebsiteNoVNCAuthenticationMessage(openWebsiteProperty ?? "", this.playerName, allowApiProperty ?? false, websitePolicyProperty ?? "", websiteWidthProperty ?? 100, false);
 
                             layoutManagerActionStore.removeAction(actionId);
