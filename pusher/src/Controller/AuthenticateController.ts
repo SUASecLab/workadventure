@@ -171,7 +171,16 @@ export class AuthenticateController extends BaseHttpController {
                             playUri as string,
                             IPAddress
                         );
+                        // Custom return for LTI Users (also return username)
+                        if (authTokenData.isLtiUser != undefined) {
+                            return res.json({
+                            ...resUserData,
+                            authToken: token,
+                            username: authTokenData?.username,
+                            locale: authTokenData?.locale,
+                        });
 
+                        }
                         if (authTokenData.accessToken == undefined) {
                             //if not nonce and code, user connected in anonymous
                             //get data with identifier and return token

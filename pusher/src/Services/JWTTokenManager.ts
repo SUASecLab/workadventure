@@ -7,6 +7,7 @@ export interface AuthTokenData {
     accessToken?: string;
     username?: string;
     locale?: string;
+    isLtiUser?: string;
 }
 export interface AdminSocketTokenData {
     authorizedRoomIds: string[]; //the list of rooms the client is authorized to read from.
