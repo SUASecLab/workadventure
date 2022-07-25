@@ -16,12 +16,12 @@ export class BBBCoWebsite extends SimpleCoWebsite {
     }
 
     load(): CancelablePromise<HTMLIFrameElement> {
-        gameManager.getCurrentGameScene().disableMediaBehaviors();
+        //gameManager.getCurrentGameScene().disableMediaBehaviors();
         return super.load();
     }
 
     unload(): Promise<void> {
-        gameManager.getCurrentGameScene().enableMediaBehaviors();
+        //gameManager.getCurrentGameScene().enableMediaBehaviors();
 
         return super.unload();
     }

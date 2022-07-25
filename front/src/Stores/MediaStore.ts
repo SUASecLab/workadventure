@@ -202,7 +202,7 @@ export const availabilityStatusStore = derived(
     [inJitsiStore, inBbbStore, silentStore, privacyShutdownStore, denyProximityMeetingStore],
     ([$inJitsiStore, $inBbbStore, $silentStore, $privacyShutdownStore, $denyProximityMeetingStore]) => {
         if ($inJitsiStore) return AvailabilityStatus.JITSI;
-        if ($inBbbStore) return AvailabilityStatus.BBB;
+        //if ($inBbbStore) return AvailabilityStatus.BBB;
         if ($denyProximityMeetingStore) return AvailabilityStatus.DENY_PROXIMITY_MEETING;
         if ($silentStore) return AvailabilityStatus.SILENT;
         if ($privacyShutdownStore) return AvailabilityStatus.AWAY;
