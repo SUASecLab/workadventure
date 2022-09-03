@@ -1,7 +1,6 @@
 import { areCharacterLayersValid, isUserNameValid, LocalUser } from "./LocalUser";
 import { v4 as uuidv4 } from "uuid";
 
-const faqKey = "faqShown";
 const playerNameKey = "playerName";
 const selectedPlayerKey = "selectedPlayer";
 const customCursorPositionKey = "customCursorPosition";
@@ -38,13 +37,6 @@ class LocalUserStore {
     getLocalUser(): LocalUser | null {
         const data = localStorage.getItem("localUser");
         return data ? JSON.parse(data) : null;
-    }
-
-    setFaqShown(shown: boolean): void {
-        localStorage.setItem(faqKey, shown.toString());
-    }
-    getFaqShown(): boolean {
-        return localStorage.getItem(faqKey) === "true";
     }
 
     setName(name: string): void {
