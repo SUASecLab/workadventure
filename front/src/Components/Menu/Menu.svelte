@@ -6,14 +6,10 @@
     import ContactSubMenu from "./ContactSubMenu.svelte";
     import CustomSubMenu from "./CustomSubMenu.svelte";
     import GuestSubMenu from "./GuestSubMenu.svelte";
-    import { FAQScene, FAQSceneName } from "../../Phaser/Login/FAQScene";
-    import {gameManager} from "../../Phaser/Game/GameManager";
-    import {faqSceneVisibleStore} from "../../Stores/FAQSceneStore";
     import {
         checkSubMenuToShow,
         customMenuIframe,
         menuVisiblilityStore,
-        menuIconVisiblilityStore,
         SubMenusInterface,
         subMenusStore,
     } from "../../Stores/MenuStore";
@@ -62,12 +58,6 @@
                 case SubMenusInterface.invite:
                     analyticsClient.menuInvite();
                     activeComponent = GuestSubMenu;
-                    break;
-                case SubMenusInterface.tips:
-                     menuVisiblilityStore.set(false);
-                     menuIconVisiblilityStore.set(false);
-                     faqSceneVisibleStore.set(true);
-                     gameManager.leaveGame(FAQSceneName,new FAQScene());
                     break;
                 case SubMenusInterface.aboutRoom:
                     analyticsClient.menuCredit();
