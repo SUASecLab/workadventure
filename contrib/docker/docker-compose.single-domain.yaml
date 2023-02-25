@@ -6,7 +6,7 @@ services:
       - ICON_URL=/icon
       - API_URL=/api
       - FRONT_URL=/
-      - CHAT_URL=/chat
+      - CHAT_URL=/chat/
       - UPLOADER_URL=/uploader
     labels:
       traefik.http.routers.play.rule: "Host(`${DOMAIN}`) && PathPrefix(`/`)"
