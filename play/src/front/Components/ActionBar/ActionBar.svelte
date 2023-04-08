@@ -277,7 +277,7 @@
     }
 
     function openBo() {
-        window.open(`https://workadventu.re/admin`, "_blanck");
+        window.open(`/admin/`, "_blanck");
     }
 
     /*function register() {
