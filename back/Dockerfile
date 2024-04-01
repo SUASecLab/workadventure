@@ -21,7 +21,9 @@ COPY libs/tailwind/package.json libs/tailwind/package.json
 COPY libs/store-utils/package.json libs/store-utils/package.json
 COPY libs/shared-utils/package.json libs/shared-utils/package.json
 ENV NODE_ENV=production
-RUN npm ci --omit=dev --workspace workadventureback
+RUN npm config set registry https://registry.npmjs.org/
+RUN npm install -g npm@10.5.0
+RUN npm ci --fetch-timeout=300000 --omit=dev --workspace workadventureback
 COPY libs ./libs
 COPY --from=proto-builder /usr/libs/messages/src ./libs/messages/src
 COPY back ./back
