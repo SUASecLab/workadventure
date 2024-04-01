@@ -23,7 +23,9 @@ COPY libs/math-utils/package.json libs/math-utils/package.json
 COPY libs/tailwind/package.json libs/tailwind/package.json
 COPY libs/store-utils/package.json libs/store-utils/package.json
 COPY libs/shared-utils/package.json libs/shared-utils/package.json
-RUN npm ci --workspace=workadventurechat
+RUN npm config set registry https://registry.npmjs.org/
+RUN npm install -g npm@10.5.0
+RUN npm ci --network-timeout 1000000 --fetch-timeout=600000 --workspace=workadventurechat
 COPY libs ./libs
 COPY --from=proto-builder /usr/libs/messages/src ./libs/messages/src
 COPY chat ./chat
