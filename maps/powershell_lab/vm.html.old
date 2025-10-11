@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PowerShell Lab</title>
+  <style>
+    body {
+      background-color: #1e1e1e;
+      color: #00a2ed;
+      font-family: Consolas, monospace;
+      text-align: center;
+      padding-top: 100px;
+    }
+    h1 {
+      font-size: 2.5em;
+    }
+    p {
+      font-size: 1.2em;
+    }
+  </style>
+</head>
+<body>
+  <h1>⚡ Welcome to your PowerShell Lab ⚡</h1>
+  <p>This is your training environment.</p>
+  <p>Here, you will learn PowerShell basics and run challenges.</p>
+</body>
+</html>
